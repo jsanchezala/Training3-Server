@@ -1,4 +1,4 @@
-package springBoot.mvc.practica2.configurations;
+package springBoot.mvc.practica3.configurations;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;

@@ -1,4 +1,4 @@
-package springBoot.mvc.practica2.controllers;
+package springBoot.mvc.practica3.controllers;
 
 
 import io.swagger.annotations.Api;
@@ -7,11 +7,10 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import springBoot.mvc.practica2.model.Producto;
+import springBoot.mvc.practica3.model.Producto;
 import org.springframework.http.ResponseEntity;
-import springBoot.mvc.practica2.repositories.ProductRepository;
+import springBoot.mvc.practica3.repositories.ProductRepository;
 
 
 import javax.servlet.http.HttpServletResponse;
@@ -48,14 +47,21 @@ public class ControladorPrincipal {
 
     @PostMapping("/newProduct")
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "creating a product")
+    @ApiOperation(value = "creating a product or update a product")
     @ApiResponses({
             @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "Created"),
             @ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "Bad Request"),
             @ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "Unhandled exception")
     })
     public void product(@RequestBody Producto producto) {
-        productRepository.save(producto);
+        Producto aux_producto = productRepository.findByCodigo(producto.getCodigo());
+        if (Objects.isNull(aux_producto)) {
+            productRepository.save(producto);
+        }else{
+            productRepository.delete(producto);
+            productRepository.save(producto);
+        }
+
     }
 
     @DeleteMapping(value = "/delete/{codigo}")
@@ -70,6 +76,7 @@ public class ControladorPrincipal {
         productRepository.deleteByCodigo(codigo);
         //productRepository.delete(productRepository.findByCodigo(codigo));
     }
+
 
     @GetMapping("/list")
     @ResponseStatus(HttpStatus.OK)
